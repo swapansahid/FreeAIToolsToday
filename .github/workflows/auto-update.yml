@@ -1,0 +1,38 @@
+name: Auto Update AI Content
+
+on:
+  schedule:
+    - cron: "0 */6 * * *" # every 6 hours
+  workflow_dispatch:
+
+jobs:
+  update-content:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Generate new content using OpenAI
+        run: |
+          sudo apt-get install -y curl jq
+          echo "Generating new AI content..."
+          curl https://api.openai.com/v1/completions \
+            -H "Content-Type: application/json" \
+            -H "Authorization: Bearer ${{ secrets.OPENAI_API_KEY }}" \
+            -d '{
+              "model": "text-davinci-003",
+              "prompt": "Generate updated daily content for a website: AI tools of the day, motivational quote, productivity hack. Return full HTML body content only.",
+              "temperature": 0.7,
+              "max_tokens": 1000
+            }' > new_content.html
+
+      - name: Replace index.html
+        run: mv new_content.html index.html
+
+      - name: Commit and Push
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add index.html
+          git commit -m "Auto update content $(date)"
+          git push
