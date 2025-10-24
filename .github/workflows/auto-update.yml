@@ -1,95 +1,97 @@
-name: Auto Update AI Content
+name: Auto Update Website Content
 
 on:
   schedule:
-    - cron: "0 */6 * * *"
-  workflow_dispatch:
+    - cron: "0 */6 * * *"  # Runs every 6 hours
+  workflow_dispatch:        # Allows manual runs
 
 jobs:
   update-content:
     runs-on: ubuntu-latest
+    
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Update content
+      run: |
+        # Create a simple updated index.html
+        cat > index.html << 'EOF'
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Free AI Tools Today - discover daily free AI websites, motivation, and productivity hacks." />
+  <title>Free AI Tools Today</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header>
+    <h1>Free AI Tools Today</h1>
+    <p>🔄 Last updated: $(date +"%Y-%m-%d %H:%M:%S")</p>
+  </header>
 
-      - name: Generate New Content
-        run: |
-          # Create updated HTML with new content
-          cat > index.html << 'EOF'
-          <!DOCTYPE html>
-          <html lang="en">
-          <head>
-            <meta charset="UTF-8" />
-            <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-            <meta name="description" content="Free AI Tools Today - discover daily free AI websites, motivation, and productivity hacks." />
-            <title>Free AI Tools Today</title>
-            <link rel="stylesheet" href="style.css" />
-          </head>
-          <body>
-            <header>
-              <h1>Free AI Tools Today</h1>
-              <p>Your daily dose of free AI power, motivation, and productivity. Last updated: $(date)</p>
-            </header>
+  <div class="ad-box">[AdSense Ad Here - Space 1]</div>
 
-            <div class="ad-box">[AdSense Ad Here]</div>
+  <section id="featured-tool">
+    <h2>🔥 Today's Featured AI Tool</h2>
+    <p><strong>Remove.bg</strong> - Automatically remove image backgrounds with one click. Free for basic use!</p>
+  </section>
 
-            <section id="featured-tool">
-              <h2>🔥 Featured AI Tool of the Day</h2>
-              <p><strong>Tool:</strong> Remove.bg - Remove image backgrounds automatically</p>
-            </section>
+  <section id="top-tools">
+    <h2>🚀 Top 5 Free AI Tools This Week</h2>
+    <ul>
+      <li><strong>ChatGPT</strong> - Free AI writing assistant</li>
+      <li><strong>Canva AI</strong> - Design like a pro</li>
+      <li><strong>Grammarly</strong> - Perfect your writing</li>
+      <li><strong>Copy.ai</strong> - Marketing copy made easy</li>
+      <li><strong>Jasper</strong> - Content creation assistant</li>
+    </ul>
+  </section>
 
-            <section id="top-tools">
-              <h2>🧰 Top 5 Free AI Tools</h2>
-              <ul>
-                <li>ChatGPT - AI writing assistant</li>
-                <li>Canva AI - Design tools</li>
-                <li>Grammarly - Writing assistant</li>
-                <li>Copy.ai - Marketing copy</li>
-                <li>Jasper - Content creation</li>
-              </ul>
-            </section>
+  <div class="ad-box">[AdSense Ad Here - Space 2]</div>
 
-            <div class="ad-box">[AdSense Ad Here]</div>
+  <section id="motivation">
+    <h2>💡 Daily Motivation</h2>
+    <blockquote>"The future belongs to those who learn more skills and combine them in creative ways." - Robert Greene</blockquote>
+  </section>
 
-            <section id="motivation">
-              <h2>🌞 Daily Motivation Quote</h2>
-              <blockquote>"The best way to predict the future is to create it." - Peter Drucker</blockquote>
-            </section>
+  <section id="trending">
+    <h2>📈 Trending AI Topics</h2>
+    <ul>
+      <li>AI video generators are revolutionizing content creation</li>
+      <li>Free AI tools for small businesses</li>
+      <li>Students using AI for homework and research</li>
+      <li>AI-powered chatbots for customer service</li>
+      <li>Automated social media content with AI</li>
+    </ul>
+  </section>
 
-            <section id="trending">
-              <h2>🌍 Trending Topics</h2>
-              <ul>
-                <li>AI Image Generators revolutionizing design</li>
-                <li>Free ChatGPT alternatives gaining popularity</li>
-                <li>Students using AI for better grades</li>
-                <li>Freelancers doubling income with AI tools</li>
-                <li>Small businesses adopting AI automation</li>
-              </ul>
-            </section>
+  <section id="productivity">
+    <h2>⚡ Productivity Tip</h2>
+    <p>Use AI to summarize long articles and save reading time. Try ChatGPT or QuillBot for quick summaries!</p>
+  </section>
 
-            <section id="productivity">
-              <h2>⚡ AI Productivity Hack</h2>
-              <p><strong>Use AI to summarize long articles</strong> - save hours of reading time!</p>
-            </section>
+  <div class="ad-box">[AdSense Ad Here - Space 3]</div>
 
-            <section id="about">
-              <h2>ℹ️ About This Website</h2>
-              <p><strong>FreeAIToolsToday.com</strong> shares new AI tools, productivity ideas, and inspiration daily. Our goal is to make AI easy and free for everyone.</p>
-            </section>
+  <section id="about">
+    <h2>ℹ️ About FreeAIToolsToday.com</h2>
+    <p>We help you discover the best free AI tools available today. Updated regularly with new tools, tips, and trends to boost your productivity.</p>
+  </section>
 
-            <div class="ad-box">[AdSense Ad Here]</div>
+  <footer>
+    <p>© 2025 FreeAIToolsToday.com | All rights reserved</p>
+    <p>🤖 Automatically updated every 6 hours</p>
+  </footer>
+</body>
+</html>
+EOF
 
-            <footer>
-              <p>© 2025 FreeAIToolsToday.com | All rights reserved | Auto-updated</p>
-            </footer>
-          </body>
-          </html>
-          EOF
-
-      - name: Commit and Push Changes
-        run: |
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
-          git add index.html
-          git commit -m "Auto-update content $(date +'%Y-%m-%d %H:%M')" || exit 0
-          git push
+    - name: Commit and push changes
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git add index.html
+        git commit -m "🔄 Auto-update: $(date +'%Y-%m-%d %H:%M')" || exit 0
+        git push
