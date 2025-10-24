@@ -2,7 +2,7 @@ name: Auto Update AI Content
 
 on:
   schedule:
-    - cron: "0 */6 * * *" # every 6 hours
+    - cron: "0 */6 * * *"
   workflow_dispatch:
 
 jobs:
@@ -10,29 +10,86 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
-        - uses: actions/checkout@b4ffde8079b3d86a0b76368a4db2bd5c4e09ef06
-        
-      - name: Generate new content using OpenAI
-        run: |
-          sudo apt-get install -y curl jq
-          echo "Generating new AI content..."
-          curl https://api.openai.com/v1/completions \
-            -H "Content-Type: application/json" \
-            -H "Authorization: Bearer ${{ secrets.OPENAI_API_KEY }}" \
-            -d '{
-              "model": "text-davinci-003",
-              "prompt": "Generate updated daily content for a website: AI tools of the day, motivational quote, productivity hack. Return full HTML body content only.",
-              "temperature": 0.7,
-              "max_tokens": 1000
-            }' > new_content.html
+        uses: actions/checkout@v4
 
-      - name: Replace index.html
-        run: mv new_content.html index.html
-
-      - name: Commit and Push
+      - name: Generate New Content
         run: |
-          git config --local user.email "github-actions[bot]@users.noreply.github.com"
-          git config --local user.name "github-actions[bot]"
+          # Create updated HTML with new content
+          cat > index.html << 'EOF'
+          <!DOCTYPE html>
+          <html lang="en">
+          <head>
+            <meta charset="UTF-8" />
+            <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+            <meta name="description" content="Free AI Tools Today - discover daily free AI websites, motivation, and productivity hacks." />
+            <title>Free AI Tools Today</title>
+            <link rel="stylesheet" href="style.css" />
+          </head>
+          <body>
+            <header>
+              <h1>Free AI Tools Today</h1>
+              <p>Your daily dose of free AI power, motivation, and productivity. Last updated: $(date)</p>
+            </header>
+
+            <div class="ad-box">[AdSense Ad Here]</div>
+
+            <section id="featured-tool">
+              <h2>🔥 Featured AI Tool of the Day</h2>
+              <p><strong>Tool:</strong> Remove.bg - Remove image backgrounds automatically</p>
+            </section>
+
+            <section id="top-tools">
+              <h2>🧰 Top 5 Free AI Tools</h2>
+              <ul>
+                <li>ChatGPT - AI writing assistant</li>
+                <li>Canva AI - Design tools</li>
+                <li>Grammarly - Writing assistant</li>
+                <li>Copy.ai - Marketing copy</li>
+                <li>Jasper - Content creation</li>
+              </ul>
+            </section>
+
+            <div class="ad-box">[AdSense Ad Here]</div>
+
+            <section id="motivation">
+              <h2>🌞 Daily Motivation Quote</h2>
+              <blockquote>"The best way to predict the future is to create it." - Peter Drucker</blockquote>
+            </section>
+
+            <section id="trending">
+              <h2>🌍 Trending Topics</h2>
+              <ul>
+                <li>AI Image Generators revolutionizing design</li>
+                <li>Free ChatGPT alternatives gaining popularity</li>
+                <li>Students using AI for better grades</li>
+                <li>Freelancers doubling income with AI tools</li>
+                <li>Small businesses adopting AI automation</li>
+              </ul>
+            </section>
+
+            <section id="productivity">
+              <h2>⚡ AI Productivity Hack</h2>
+              <p><strong>Use AI to summarize long articles</strong> - save hours of reading time!</p>
+            </section>
+
+            <section id="about">
+              <h2>ℹ️ About This Website</h2>
+              <p><strong>FreeAIToolsToday.com</strong> shares new AI tools, productivity ideas, and inspiration daily. Our goal is to make AI easy and free for everyone.</p>
+            </section>
+
+            <div class="ad-box">[AdSense Ad Here]</div>
+
+            <footer>
+              <p>© 2025 FreeAIToolsToday.com | All rights reserved | Auto-updated</p>
+            </footer>
+          </body>
+          </html>
+          EOF
+
+      - name: Commit and Push Changes
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
           git add index.html
-          git commit -m "Auto update content $(date)"
+          git commit -m "Auto-update content $(date +'%Y-%m-%d %H:%M')" || exit 0
           git push
