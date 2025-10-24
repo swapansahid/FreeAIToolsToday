@@ -10,8 +10,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v3
-
+        - uses: actions/checkout@b4ffde8079b3d86a0b76368a4db2bd5c4e09ef06
+        
       - name: Generate new content using OpenAI
         run: |
           sudo apt-get install -y curl jq
